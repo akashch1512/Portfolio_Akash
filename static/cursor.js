@@ -212,10 +212,6 @@ function initScrollSpy() {
                 const activeLink = document.querySelector(`.nav-link[data-target="${id}"]`);
                 if (activeLink) {
                     activeLink.classList.add('active');
-                    // On mobile, scroll the nav to the active item
-                    if (window.innerWidth <= 900) {
-                        activeLink.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                    }
                 }
             }
         });
@@ -237,6 +233,8 @@ openBtn.addEventListener('click', (e) => {
     e.preventDefault();
     modal.classList.add('active');
     document.body.style.overflow = 'hidden'; 
+    const tabs = document.querySelector('.modal-tabs');
+    if (tabs) tabs.scrollLeft = 0;
 });
 
 closeBtn.addEventListener('click', () => {
