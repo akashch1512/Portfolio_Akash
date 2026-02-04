@@ -527,6 +527,25 @@ nav a:focus-visible::after {
     width: 100%;
 }
 
+.notify-status {
+    min-height: 14px;
+    font-size: var(--fs-xxs);
+    color: rgba(254, 254, 254, 0.65);
+    letter-spacing: 0.6px;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.notify-status.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notify-status.is-error {
+    color: #ffb4a2;
+}
+
 /* Cursor Lines */
 .cursor-line {
     position: fixed;

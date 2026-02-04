@@ -241,3 +241,70 @@ closeBtn.addEventListener('click', () => {
     modal.classList.remove('active');
     document.body.style.overflow = 'auto'; 
 });
+
+// --- NOTIFY FORM (AJAX) --- //
+const notifyForm = document.querySelector('.notify-form');
+if (notifyForm) {
+    const notifyInput = notifyForm.querySelector('input[name="email"]');
+    const notifyButton = notifyForm.querySelector('.notify-btn');
+    const notifyStatus = document.querySelector('.notify-status');
+    const defaultBtnText = notifyButton ? notifyButton.textContent : '';
+    let statusTimer = null;
+
+    const setStatus = (message, isError = false) => {
+        if (!notifyStatus) return;
+        notifyStatus.textContent = message;
+        notifyStatus.classList.toggle('is-error', isError);
+        notifyStatus.classList.add('is-visible');
+        if (statusTimer) clearTimeout(statusTimer);
+        statusTimer = setTimeout(() => {
+            notifyStatus.classList.remove('is-visible');
+        }, 2800);
+    };
+
+    notifyForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!notifyInput || !notifyButton) return;
+
+        const email = notifyInput.value.trim();
+        if (!email) {
+            setStatus('Please enter a valid email.', true);
+            return;
+        }
+
+        notifyButton.disabled = true;
+        notifyButton.textContent = 'Saving...';
+
+        try {
+            const body = new URLSearchParams(new FormData(notifyForm));
+            const response = await fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body
+            });
+            let data = null;
+            try {
+                data = await response.json();
+            } catch (err) {
+                data = null;
+            }
+
+            if (!response.ok || (data && data.ok === false)) {
+                const message = (data && data.message) ? data.message : 'Could not save email. Try again.';
+                setStatus(message, true);
+            } else {
+                const message = (data && data.message) ? data.message : 'Thanks! You are on the list.';
+                setStatus(message, false);
+                notifyInput.value = '';
+            }
+        } catch (err) {
+            setStatus('Network error. Try again.', true);
+        } finally {
+            notifyButton.disabled = false;
+            notifyButton.textContent = defaultBtnText;
+        }
+    });
+}

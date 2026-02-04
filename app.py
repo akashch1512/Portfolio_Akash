@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, send_from_directory, request, redirect, url_for
+from flask import Flask, render_template, send_from_directory, request, redirect, url_for, jsonify
 from database.schema import add_notification_email
 
 app = Flask(__name__)
@@ -14,8 +14,25 @@ def home():
     """
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
-        if email:
+        wants_json = (
+            request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+            or request.accept_mimetypes.best == 'application/json'
+        )
+
+        if not email:
+            if wants_json:
+                return jsonify({"ok": False, "message": "Please enter a valid email."}), 400
+            return redirect(url_for('home'))
+
+        try:
             add_notification_email(email)
+        except Exception:
+            if wants_json:
+                return jsonify({"ok": False, "message": "Could not save email. Try again."}), 500
+            return redirect(url_for('home'))
+
+        if wants_json:
+            return jsonify({"ok": True, "message": "Thanks! You are on the list."})
         return redirect(url_for('home'))
     return render_template('index.html')
 
