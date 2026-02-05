@@ -309,6 +309,57 @@ nav a:focus-visible::after {
     fill: #000;
 }
 
+.appointment-btn {
+    position: relative;
+}
+
+.appointment-btn::before,
+.appointment-btn::after {
+    position: absolute;
+    left: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.appointment-btn::after {
+    content: attr(data-tooltip);
+    bottom: calc(100% + 14px);
+    background: #0b0e10;
+    color: #fefefe;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: var(--fs-xxs);
+    font-weight: var(--fw-medium);
+    text-transform: none;
+    letter-spacing: 0.2px;
+    line-height: 1.4;
+    box-shadow: 0 12px 18px -12px rgba(20, 20, 20, 0.4);
+    white-space: normal;
+    max-width: 220px;
+    text-align: center;
+    z-index: 20;
+}
+
+.appointment-btn::before {
+    content: "";
+    bottom: calc(100% + 6px);
+    border: 6px solid transparent;
+    border-top-color: #0b0e10;
+    z-index: 19;
+}
+
+.appointment-btn:hover::before,
+.appointment-btn:hover::after,
+.appointment-btn:focus-visible::before,
+.appointment-btn:focus-visible::after,
+.appointment-btn:active::before,
+.appointment-btn:active::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
 /* Scroll Hint */
 .scroll-hint {
     position: absolute;
