@@ -69,7 +69,7 @@
 
         <div class="cta-group">
             <a href="mailto:contact@akashchaudhari.in" class="btn hire-btn">Hire Me</a>
-            <a href="https://razorpay.me/@akashchaudharifreelanceservic" target="_blank" rel="noopener noreferrer" class="btn coffee-btn appointment-btn" data-tooltip="Appointment fee: 100 rupees.">
+            <a href="https://razorpay.me/@akashchaudharifreelanceservic" target="_blank" rel="noopener noreferrer" class="btn coffee-btn appointment-btn" id="appointment-btn" data-razorpay-key="{{ razorpay_key_id or '' }}" data-tooltip="Appointment fee: 100 rupees. Pay it.">
                 <span>Book an Appointment</span>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1.5A2.5 2.5 0 0 1 22 6.5v13A2.5 2.5 0 0 1 19.5 22h-15A2.5 2.5 0 0 1 2 19.5v-13A2.5 2.5 0 0 1 4.5 4H6V3a1 1 0 0 1 1-1Zm12.5 8H4.5v9.5c0 .552.448 1 1 1h13c.552 0 1-.448 1-1V10Zm0-3.5c0-.552-.448-1-1-1H17v1a1 1 0 1 1-2 0V5H8v1a1 1 0 1 1-2 0V5H4.5c-.552 0-1 .448-1 1V8h16Z" />
@@ -145,6 +145,7 @@
     </div>
 
 </body>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="/static/cursor.js"></script>
 
 </html>

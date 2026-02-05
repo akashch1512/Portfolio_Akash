@@ -308,3 +308,87 @@ if (notifyForm) {
         }
     });
 }
+
+// --- RAZORPAY APPOINTMENT PAYMENT --- //
+const appointmentBtn = document.getElementById('appointment-btn');
+if (appointmentBtn) {
+    appointmentBtn.addEventListener('click', async (event) => {
+        const keyId = appointmentBtn.dataset.razorpayKey || '';
+        if (!keyId || typeof Razorpay === 'undefined') {
+            return;
+        }
+
+        event.preventDefault();
+        appointmentBtn.setAttribute('aria-busy', 'true');
+
+        try {
+            const orderResponse = await fetch('/api/razorpay/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ source: 'appointment-button' })
+            });
+
+            let orderData = {};
+            try {
+                orderData = await orderResponse.json();
+            } catch (err) {
+                orderData = {};
+            }
+
+            if (!orderResponse.ok || !orderData.ok || !orderData.orderId) {
+                const message = orderData.message || 'Could not start the payment. Try again.';
+                throw new Error(message);
+            }
+
+            const options = {
+                key: orderData.keyId,
+                amount: orderData.amount,
+                currency: orderData.currency,
+                name: orderData.name || 'Akash Chaudhari',
+                description: orderData.description || 'Book an appointment',
+                order_id: orderData.orderId,
+                handler: async function (response) {
+                    try {
+                        const verifyResponse = await fetch('/api/razorpay/verify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(response)
+                        });
+
+                        let verifyData = {};
+                        try {
+                            verifyData = await verifyResponse.json();
+                        } catch (err) {
+                            verifyData = {};
+                        }
+
+                        if (!verifyResponse.ok || !verifyData.ok) {
+                            const message = verifyData.message || 'Payment verification failed.';
+                            throw new Error(message);
+                        }
+
+                        alert('Payment successful. We will contact you shortly.');
+                    } catch (err) {
+                        const paymentId = response.razorpay_payment_id || 'unknown';
+                        alert(`${err.message} Payment ID: ${paymentId}`);
+                    }
+                },
+                theme: { color: '#1b7a6b' }
+            };
+
+            const razorpay = new Razorpay(options);
+            razorpay.on('payment.failed', function () {
+                alert('Payment failed or was cancelled. Please try again.');
+            });
+            razorpay.open();
+        } catch (err) {
+            alert(err.message || 'Could not start the payment.');
+            const fallbackUrl = appointmentBtn.getAttribute('href');
+            if (fallbackUrl) {
+                window.open(fallbackUrl, '_blank', 'noopener');
+            }
+        } finally {
+            appointmentBtn.removeAttribute('aria-busy');
+        }
+    });
+}
