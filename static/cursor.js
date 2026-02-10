@@ -5,6 +5,13 @@ const loaderWrapper = document.getElementById('loader-wrapper');
 document.addEventListener('DOMContentLoaded', () => {
     // Remove scroll lock class if set
     document.body.classList.remove('no-scroll');
+    
+    // Trigger loader slide-out animation after 3.5 seconds
+    if (loaderWrapper) {
+        setTimeout(() => {
+            loaderWrapper.classList.add('slide-out');
+        }, 3500);
+    }
 });
 
 // Handle loader removal via CSS animation - called when slideUp animation finishes
@@ -14,11 +21,6 @@ if (loaderWrapper) {
         loaderWrapper.style.display = 'none';
     }, { once: true });
 }
-
-// Fallback: ensure scroll is unlocked after a reasonable time
-setTimeout(() => {
-    document.body.classList.remove('no-scroll');
-}, 3000);
 
 // --- 1. CURSOR ANIMATION (WITH TOUCH THROTTLING & DOC HIDDEN PAUSE) --- //
 const startX = 358;
